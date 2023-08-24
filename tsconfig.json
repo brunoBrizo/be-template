@@ -19,6 +19,11 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@config/*": ["src/common/config/*"],
+      "@utils/*": ["src/common/utils/*"],
+      "@filters/*": ["src/common/filters/*"],
+      "@interceptors/*": ["src/common/interceptors/*"],
+      "@database/*": ["src/database/*"],
+      "@logger/*": ["src/logger/*"],
       "@src/*": ["src/*"]
     }
   }
