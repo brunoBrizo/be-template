@@ -7,7 +7,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-export abstract class RmsBaseEntity extends BaseEntity {
+export abstract class CustomBaseEntity extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id?: string;
