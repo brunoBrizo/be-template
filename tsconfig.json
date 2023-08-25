@@ -24,6 +24,7 @@
       "@interceptors/*": ["src/common/interceptors/*"],
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
+      "@users/*": ["src/users/*"],
       "@src/*": ["src/*"]
     }
   }

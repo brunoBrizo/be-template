@@ -5,12 +5,14 @@ import { LoggerModule } from '@logger/logger.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { UserModule } from '@users/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(configModuleOptions),
     DatabaseModule,
     LoggerModule,
+    UserModule,
   ],
   controllers: [],
   providers: [
