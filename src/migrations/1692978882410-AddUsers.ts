@@ -13,6 +13,12 @@ export class AddUsers1692978882410 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "users" ADD CONSTRAINT "FK_ae78dc6cb10aa14cfef96b2dd90" FOREIGN KEY ("country_id") REFERENCES "countries"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `INSERT INTO countries (code, name) VALUES ('BR', 'Brasil')`,
+    );
+    await queryRunner.query(
+      `INSERT INTO countries (code, name) VALUES ('UY', 'Uruguay')`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

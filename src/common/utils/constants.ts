@@ -13,6 +13,10 @@ export const MESSAGES = {
   CITY_REQUIRED: 'Cidade é obrigatória',
   PHONE_NUMBER_REQUIRED: 'Telefone é obrigatório',
   COUNTRY_REQUIRED: 'País é obrigatório',
+  INVALID_TOKEN: 'Token inválido',
+  INVALID_EMAIL_OR_PASSWORD: 'Email ou senha inválidos',
+  COUNTRY_NOT_FOUND: 'País não encontrado',
+  EMAIL_ALREADY_EXISTS: 'Email já cadastrado',
 };
 
 export const ENV_VARS = {
@@ -24,6 +28,8 @@ export const ENV_VARS = {
   DB_SYNCHRONIZE: 'DB_SYNCHRONIZE',
   DB_MIGRATIONS_RUN: 'DB_MIGRATIONS_RUN',
   PORT: 'PORT',
+  JWT_SECRET: 'JWT_SECRET',
+  JWT_EXPIRES_IN: 'JWT_EXPIRES_IN',
 };
 
 export const ERROR_CODES = {
@@ -33,3 +39,5 @@ export const ERROR_CODES = {
 
 export const PASSWORD_MAX_LENGTH = 32;
 export const PHONE_MAX_LENGTH = 25;
+
+export const JWT_DEFAULT_STRATEGY = 'jwt';

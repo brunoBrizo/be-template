@@ -3,6 +3,9 @@ import { DataSource, Repository } from 'typeorm';
 import { LoggerService } from '@logger/logger.service';
 import { User } from '@users/models/user.entity';
 import { CreateUserDto } from '@users/dtos/create-user.dto';
+import { UserSearchFields } from './models/user-search-fields.enum';
+import { Location } from '@common/models/location.entity';
+import { Country } from '@common/models/country.entity';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -10,8 +13,12 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.create(createUserDto);
+  async createUser(
+    location: Location,
+    country: Country,
+    createUserDto: CreateUserDto,
+  ): Promise<User> {
+    const user = this.create({ location, country, ...createUserDto });
     try {
       await this.save(user);
       return user;
@@ -28,16 +35,17 @@ export class UserRepository extends Repository<User> {
     return this.save(user);
   }
 
-  async findById(id: string): Promise<User> {
+  async findUser(field: UserSearchFields, value: string): Promise<User> {
     try {
-      const user = await this.findOne({
-        where: { id },
-      });
+      const user = await this.createQueryBuilder('user')
+        .leftJoinAndSelect('user.country', 'countries')
+        .where(`user.${field} = :value`, { value })
+        .getOne();
 
       return user;
     } catch (error) {
       this.logger.error(
-        `Error finding user by id. User ID: ${id}`,
+        `Error finding a user by ${field}. User ${field}: ${value}`,
         error.stack,
       );
       throw new InternalServerErrorException();

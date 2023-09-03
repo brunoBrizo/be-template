@@ -25,6 +25,8 @@
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
       "@users/*": ["src/users/*"],
+      "@auth/*": ["src/auth/*"],
+      "@common/*": ["src/common/*"],
       "@src/*": ["src/*"]
     }
   }
