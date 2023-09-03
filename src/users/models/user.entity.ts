@@ -1,8 +1,9 @@
 import { CustomBaseEntity } from '@database/base.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { Country } from './country.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Country } from '../../common/models/country.entity';
+import { Location } from '@src/common/models/location.entity';
 
 @Entity('users')
 export class User extends CustomBaseEntity {
@@ -39,4 +40,13 @@ export class User extends CustomBaseEntity {
   @Column({ name: 'country_id' })
   @Exclude({ toPlainOnly: true })
   countryId: string;
+
+  @ApiProperty()
+  @OneToOne(() => Location, { cascade: true })
+  @JoinColumn({ name: 'location_id' })
+  location: Location;
+
+  @Column({ name: 'location_id', nullable: true })
+  @Exclude({ toPlainOnly: true })
+  locationId?: string;
 }

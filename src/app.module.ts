@@ -1,3 +1,4 @@
+import { AuthModule } from '@auth/auth.module';
 import { configModuleOptions } from '@config/config-module.config';
 import { DatabaseModule } from '@database/database.module';
 import { CustomExceptionFilter } from '@filters/custom-exception.filter';
@@ -13,6 +14,7 @@ import { UserModule } from '@users/user.module';
     DatabaseModule,
     LoggerModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [

@@ -30,7 +30,7 @@ export class CreateUserDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty({ message: MESSAGES.FIRST_NAME_REQUIRED })
-  firstName?: string;
+  name?: string;
 
   @ApiProperty()
   @IsString()
