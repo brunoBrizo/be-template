@@ -48,15 +48,7 @@ export class AuthService {
     createUserDto.password = await hashUserPassword(createUserDto.password);
 
     const user = await this.userService.createUser(createUserDto);
-
-    const token = this.generateToken({ userId: user.id });
-
-    const response: LoginResponse = {
-      accessToken: token,
-      user,
-    };
-
-    return response;
+    return this.updateTokens(user);
   }
 
   async updateTokens(user: User): Promise<LoginResponse> {
