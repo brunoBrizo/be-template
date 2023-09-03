@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { comparePassword, hashUserPassword } from '@utils/password.helper';
 import { MESSAGES } from '@utils/constants';
 import { JwtPayload } from '@auth/models/jwt-payload.interface';
+import { User } from '@users/models/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -32,10 +33,11 @@ export class AuthService {
       throw new UnauthorizedException(MESSAGES.INVALID_EMAIL_OR_PASSWORD);
     }
 
-    const token = await this.generateToken({ userId: user.id });
+    const accessToken = this.generateToken({ userId: user.id });
 
     const response: LoginResponse = {
-      accessToken: token,
+      accessToken,
+      refreshToken: user.refreshToken,
       user,
     };
 
@@ -47,7 +49,7 @@ export class AuthService {
 
     const user = await this.userService.createUser(createUserDto);
 
-    const token = await this.generateToken({ userId: user.id });
+    const token = this.generateToken({ userId: user.id });
 
     const response: LoginResponse = {
       accessToken: token,
@@ -57,7 +59,22 @@ export class AuthService {
     return response;
   }
 
-  private async generateToken(payload: JwtPayload): Promise<string> {
-    return this.jwtService.signAsync(payload);
+  async updateTokens(user: User): Promise<LoginResponse> {
+    const accessToken = this.generateToken({ userId: user.id });
+    const refreshToken = this.generateToken({ userId: user.id });
+
+    await this.userService.updateRefreshToken(user, refreshToken);
+
+    const response: LoginResponse = {
+      accessToken,
+      refreshToken,
+      user,
+    };
+
+    return response;
+  }
+
+  private generateToken(payload: JwtPayload): string {
+    return this.jwtService.sign(payload);
   }
 }

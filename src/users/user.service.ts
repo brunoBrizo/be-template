@@ -48,4 +48,9 @@ export class UserService {
 
     return this.userRepository.createUser(location, country, createUserDto);
   }
+
+  async updateRefreshToken(user: User, refreshToken: string): Promise<void> {
+    user.refreshToken = refreshToken;
+    await this.userRepository.updateUser(user);
+  }
 }
