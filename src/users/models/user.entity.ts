@@ -49,4 +49,8 @@ export class User extends CustomBaseEntity {
   @Column({ name: 'location_id', nullable: true })
   @Exclude({ toPlainOnly: true })
   locationId?: string;
+
+  @Column({ name: 'refresh_token', nullable: true })
+  @Exclude({ toPlainOnly: true })
+  refreshToken?: string;
 }

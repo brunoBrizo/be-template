@@ -17,6 +17,9 @@ export const MESSAGES = {
   INVALID_EMAIL_OR_PASSWORD: 'Email ou senha inválidos',
   COUNTRY_NOT_FOUND: 'País não encontrado',
   EMAIL_ALREADY_EXISTS: 'Email já cadastrado',
+  REFRESH_OK: 'Token atualizado com sucesso',
+  UNAUTHORIZED: 'Não autorizado',
+  LOGIN_OK: 'Login realizado com sucesso',
 };
 
 export const ENV_VARS = {
