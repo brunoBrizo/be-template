@@ -27,6 +27,7 @@
     "migrations:revert": "cross-env STAGE=dev yarn run typeorm -d ./src/common/config/typeorm-migration.config.ts migration:revert"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.9.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",

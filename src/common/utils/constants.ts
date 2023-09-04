@@ -20,6 +20,7 @@ export const MESSAGES = {
   REFRESH_OK: 'Token atualizado com sucesso',
   UNAUTHORIZED: 'Não autorizado',
   LOGIN_OK: 'Login realizado com sucesso',
+  TOKEN_EXPIRED: 'Token expirado',
 };
 
 export const ENV_VARS = {
@@ -33,6 +34,11 @@ export const ENV_VARS = {
   PORT: 'PORT',
   JWT_SECRET: 'JWT_SECRET',
   JWT_EXPIRES_IN: 'JWT_EXPIRES_IN',
+  WEB_APP_URL: 'WEB_APP_URL',
+  EMAIL_SERVICE: 'EMAIL_SERVICE',
+  EMAIL_USER: 'EMAIL_USER',
+  EMAIL_PASSWORD: 'EMAIL_PASSWORD',
+  EMAIL_FROM: 'EMAIL_FROM',
 };
 
 export const ERROR_CODES = {
@@ -44,3 +50,8 @@ export const PASSWORD_MAX_LENGTH = 32;
 export const PHONE_MAX_LENGTH = 25;
 
 export const JWT_DEFAULT_STRATEGY = 'jwt';
+
+export const EMAIL_MESSAGES = {
+  PASSWORD_RESET_SUBJECT: 'Mudança de senha',
+  ACCOUNT_CREATED_SUBJECT: 'Conta criada com sucesso',
+};
