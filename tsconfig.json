@@ -27,6 +27,7 @@
       "@users/*": ["src/users/*"],
       "@auth/*": ["src/auth/*"],
       "@common/*": ["src/common/*"],
+      "@email/*": ["src/email/*"],
       "@src/*": ["src/*"]
     }
   }

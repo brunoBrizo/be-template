@@ -17,6 +17,12 @@ import { JWT_DEFAULT_STRATEGY } from '@utils/constants';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { LogInUserDecorator } from '@auth/decorators/login.decorator';
 import { SignUpUserDecorator } from '@auth/decorators/signup.decorator';
+import { LogOutDocDecorator } from '@auth/dto/logout-user.decorator';
+import { User } from '@users/models/user.entity';
+import { ResetPasswordRequestDto } from '@auth/dto/request-reset-password.dto';
+import { ResetPasswordRequestDecorator } from '@auth/decorators/reset-password-request.decorator';
+import { ResetPasswordDecorator } from '@auth/decorators/reset-password.decorator';
+import { ResetPasswordDTO } from '@auth/dto/reset-password.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -41,7 +47,31 @@ export class AuthController {
   @RefreshTokenDocDecorator()
   @Post('/refresh')
   @UseGuards(AuthGuard(JWT_DEFAULT_STRATEGY))
-  refresh(@GetUser() user): Promise<LoginResponse> {
+  refresh(@GetUser() user: User): Promise<LoginResponse> {
     return this.authService.updateTokens(user);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('/logout')
+  @UseGuards(AuthGuard(JWT_DEFAULT_STRATEGY))
+  @LogOutDocDecorator()
+  logout(@GetUser() user: User): Promise<void> {
+    return this.authService.logout(user);
+  }
+
+  @ResetPasswordRequestDecorator()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('password/reset-request')
+  resetPasswordRequest(
+    @Body() resetPasswordRequestDto: ResetPasswordRequestDto,
+  ): Promise<void> {
+    return this.authService.resetPasswordRequest(resetPasswordRequestDto);
+  }
+
+  @ResetPasswordDecorator()
+  @Post('password/reset')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDTO): Promise<void> {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 }

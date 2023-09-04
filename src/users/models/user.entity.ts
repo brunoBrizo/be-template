@@ -53,4 +53,8 @@ export class User extends CustomBaseEntity {
   @Column({ name: 'refresh_token', nullable: true })
   @Exclude({ toPlainOnly: true })
   refreshToken?: string;
+
+  @Column({ name: 'reset_password_token', nullable: true })
+  @Exclude({ toPlainOnly: true })
+  resetPasswordToken?: string;
 }

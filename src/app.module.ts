@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { UserModule } from '@users/user.module';
+import { EmailModule } from '@email/email.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserModule } from '@users/user.module';
     LoggerModule,
     UserModule,
     AuthModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [
