@@ -11,8 +11,8 @@ import { MESSAGES } from '@utils/constants';
 export const ResetPasswordDecorator = () => {
   return applyDecorators(
     ApiOperation({
-      summary: `Reset an employee's password`,
-      description: `This endpoint will be in charge of handling the employee's password reset`,
+      summary: `Reset a user's password`,
+      description: `This endpoint will be in charge of handling the user's password reset`,
     }),
     ApiBody({ type: ResetPasswordDTO }),
     ApiNoContentResponse({
