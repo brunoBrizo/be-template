@@ -1,17 +1,23 @@
+import { ResetPasswordDTO } from '@auth/dto/reset-password.dto';
 import { CreateUserDto } from '@users/dtos/create-user.dto';
 import { LoginResponse } from '@auth/models/login-response';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LogInUserDto } from '@auth/dto/login-user.dto';
 import { UserService } from '@users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { comparePassword, hashUserPassword } from '@utils/password.helper';
-import { MESSAGES } from '@utils/constants';
+import { ENV_VARS, JWT_TOKEN_EXPIRED_ERROR, MESSAGES } from '@utils/constants';
 import { JwtPayload } from '@auth/models/jwt-payload.interface';
 import { User } from '@users/models/user.entity';
 import { ResetPasswordRequestDto } from '@auth/dto/request-reset-password.dto';
 import { EmailService } from '@email/email.service';
 import { LoggerService } from '@logger/logger.service';
-import { ResetPasswordDTO } from '@auth/dto/reset-password.dto';
+import { TokenType } from '@auth/models/token-type.enum';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +26,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private emailService: EmailService,
     private loggerService: LoggerService,
+    private readonly configService: ConfigService,
   ) {}
 
   async logIn(logInUserDto: LogInUserDto): Promise<LoginResponse> {
@@ -39,11 +46,12 @@ export class AuthService {
       throw new UnauthorizedException(MESSAGES.INVALID_EMAIL_OR_PASSWORD);
     }
 
-    const accessToken = this.generateToken({ userId: user.id });
+    const { accessToken, refreshToken } = await this.generateTokens(user.id);
+    await this.updateUserRefreshToken(user, refreshToken);
 
     const response: LoginResponse = {
       accessToken,
-      refreshToken: user.refreshToken,
+      refreshToken,
       user,
     };
 
@@ -58,14 +66,14 @@ export class AuthService {
   }
 
   async updateTokens(user: User): Promise<LoginResponse> {
-    const accessToken = this.generateToken({ userId: user.id });
-    const refreshToken = this.generateToken({ userId: user.id });
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this.generateTokens(user.id);
 
-    await this.userService.updateRefreshToken(user, refreshToken);
+    await this.updateUserRefreshToken(user, newRefreshToken);
 
     const response: LoginResponse = {
       accessToken,
-      refreshToken,
+      refreshToken: newRefreshToken,
       user,
     };
 
@@ -83,7 +91,10 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(email);
 
     if (user) {
-      const resetPasswordToken = this.generateToken({ userId: user.id });
+      const resetPasswordToken = await this.generateToken(TokenType.EMAIL, {
+        userId: user.id,
+        email: user.email,
+      });
 
       user.resetPasswordToken = resetPasswordToken;
       await this.userService.updateUser(user);
@@ -97,10 +108,76 @@ export class AuthService {
     }
   }
 
-  // TODO: Implement this
-  // async resetPassword(resetPasswordDto: ResetPasswordDTO): Promise<void> {}
+  async resetPassword(resetPasswordDto: ResetPasswordDTO): Promise<void> {
+    const { password, token } = resetPasswordDto;
 
-  private generateToken(payload: JwtPayload): string {
-    return this.jwtService.sign(payload);
+    const userId = await this.decodeResetPasswordToken(token);
+
+    const user = await this.userService.resetUserPassword(
+      userId,
+      password,
+      token,
+    );
+
+    this.loggerService.log(`User ${user.email} has completed a password reset`);
+  }
+
+  private async generateToken(
+    tokenType: TokenType,
+    payload: JwtPayload,
+  ): Promise<string> {
+    const token = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>(
+        `JWT_${tokenType.toUpperCase()}_TOKEN_SECRET`,
+      ),
+      expiresIn: this.configService.get<string>(
+        `JWT_${tokenType.toUpperCase()}_TOKEN_EXPIRATION_TIME`,
+      ),
+    });
+
+    return token;
+  }
+
+  private async generateTokens(
+    userId: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const payload: JwtPayload = {
+      userId,
+    };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      await this.generateToken(TokenType.ACCESS, payload),
+      await this.generateToken(TokenType.REFRESH, payload),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  private updateUserRefreshToken(
+    user: User,
+    refreshToken: string,
+  ): Promise<User> {
+    return this.userService.updateRefreshToken(user, refreshToken);
+  }
+
+  private async decodeResetPasswordToken(token: string): Promise<string> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>(ENV_VARS.JWT_EMAIL_TOKEN_SECRET),
+      });
+
+      const userId = payload?.userId;
+      if (!userId) {
+        throw new BadRequestException(MESSAGES.INVALID_TOKEN);
+      }
+
+      return userId;
+    } catch (error) {
+      if (error.name === JWT_TOKEN_EXPIRED_ERROR) {
+        throw new BadRequestException(MESSAGES.TOKEN_EXPIRED);
+      } else {
+        throw new BadRequestException(MESSAGES.INVALID_TOKEN);
+      }
+    }
   }
 }

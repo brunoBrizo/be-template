@@ -7,6 +7,7 @@ import { MESSAGES } from '@utils/constants';
 import { Location } from '@src/common/models/location.entity';
 import { CountryRepository } from '@common/repositories/country.repository';
 import { CountrySearchFields } from '@common/models/country-search-fields.enum';
+import { hashUserPassword } from '@utils/password.helper';
 
 @Injectable()
 export class UserService {
@@ -53,8 +54,25 @@ export class UserService {
     return this.userRepository.updateUser(user);
   }
 
-  async updateRefreshToken(user: User, refreshToken: string): Promise<void> {
+  updateRefreshToken(user: User, refreshToken: string): Promise<User> {
     user.refreshToken = refreshToken;
-    await this.userRepository.updateUser(user);
+    return this.userRepository.updateUser(user);
+  }
+
+  async resetUserPassword(
+    userId: string,
+    password: string,
+    resetToken: string,
+  ): Promise<User> {
+    const user = await this.getUserById(userId);
+
+    if (user.resetPasswordToken !== resetToken) {
+      throw new BadRequestException(MESSAGES.INVALID_TOKEN);
+    }
+
+    user.password = await hashUserPassword(password);
+    user.resetPasswordToken = null;
+
+    return this.updateUser(user);
   }
 }

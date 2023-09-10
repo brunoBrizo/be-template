@@ -13,7 +13,7 @@ import { LoginResponse } from '@auth/models/login-response';
 import { CreateUserDto } from '@users/dtos/create-user.dto';
 import { RefreshTokenDocDecorator } from '@auth/decorators/refresh-token.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { JWT_DEFAULT_STRATEGY } from '@utils/constants';
+import { JWT_ACCESS_STRATEGY, JWT_REFRESH_STRATEGY } from '@utils/constants';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { LogInUserDecorator } from '@auth/decorators/login.decorator';
 import { SignUpUserDecorator } from '@auth/decorators/signup.decorator';
@@ -39,21 +39,21 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('/signup')
   @SignUpUserDecorator()
-  signUp(@Body() createEmployeeDto: CreateUserDto): Promise<LoginResponse> {
-    return this.authService.signUpUser(createEmployeeDto);
+  signUp(@Body() createUserDto: CreateUserDto): Promise<LoginResponse> {
+    return this.authService.signUpUser(createUserDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @RefreshTokenDocDecorator()
   @Post('/refresh')
-  @UseGuards(AuthGuard(JWT_DEFAULT_STRATEGY))
+  @UseGuards(AuthGuard(JWT_REFRESH_STRATEGY))
   refresh(@GetUser() user: User): Promise<LoginResponse> {
     return this.authService.updateTokens(user);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/logout')
-  @UseGuards(AuthGuard(JWT_DEFAULT_STRATEGY))
+  @UseGuards(AuthGuard(JWT_ACCESS_STRATEGY))
   @LogOutDocDecorator()
   logout(@GetUser() user: User): Promise<void> {
     return this.authService.logout(user);

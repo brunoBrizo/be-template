@@ -8,13 +8,13 @@ import { ENV_VARS, MESSAGES } from '@utils/constants';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessStrategy extends PassportStrategy(Strategy) {
   constructor(
     private userService: UserService,
     private configService: ConfigService,
   ) {
     super({
-      secretOrKey: configService.get<string>(ENV_VARS.JWT_SECRET),
+      secretOrKey: configService.get<string>(ENV_VARS.JWT_ACCESS_TOKEN_SECRET),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
