@@ -1,4 +1,4 @@
-# PsicoAmin API
+# DevSeeker API
 
 
 # Installation
