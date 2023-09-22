@@ -1,7 +1,7 @@
 {
-  "name": "psicoadmin-be",
+  "name": "devseeker-be",
   "version": "0.0.1",
-  "description": "PsicoAdmin API",
+  "description": "DevSeeker API",
   "author": "Bruno Brizolara",
   "private": true,
   "license": "MIT",
